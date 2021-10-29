@@ -55,7 +55,14 @@ async function run() {
             res.send(service)
         })
 
-
+        // email get api----------------
+        app.get('/myOrderServices/:email', async (req, res) => {
+            const email = req.params.email;
+            // console.log(id)
+            const query = { email: email }
+            const myOrder = await orderCollection.find(query).toArray();
+            res.send(myOrder)
+        })
         //POST API new --------------------
         app.post('/postServices', async (req, res) => {
 
@@ -67,6 +74,8 @@ async function run() {
             // console.log(result)
             res.send(result)
         })
+
+
 
         //Orders api-----------------
         app.post('/addToOrders', async (req, res) => {
@@ -92,20 +101,26 @@ async function run() {
         })
 
         // update api-------------------
-        app.put('/updateServices/:id', async (req, res) => {
+        app.put("/updateService/:id", async (req, res) => {
             const id = req.params.id;
-            const filter = { _id: ObjectId(id) };
-            const option = { upsert: true };
-            const updateDoc = {
-                $set: {
-                    name: updateService.name,
-                    email: updateService.email
 
-                }
-            }
-            const result = await servicesCollection.updateOne(filter, option, updateDoc)
-            res.json(result)
-        })
+            const updatedService = req.body;
+            const filter = { _id: ObjectId(id) };
+            // console.log(updatedService)
+
+            servicesCollection
+                .updateOne(filter, {
+                    $set: {
+                        title: updatedService.title,
+                        description: updatedService.description,
+                        price: updatedService.price,
+                        img: updatedService.img
+                    },
+                })
+                .then((result) => {
+                    res.send(result);
+                });
+        });
 
         //get search -------------------
         app.get("/searchServices", async (req, res) => {
@@ -117,14 +132,8 @@ async function run() {
             // console.log(result);
         })
 
-        // email get api----------------
-        app.get('/myOrderServices/:email', async (req, res) => {
-            const email = req.params.email;
-            // console.log(id)
-            const query = { email: email }
-            const myOrder = await orderCollection.find(query).toArray();
-            res.send(myOrder)
-        })
+
+
 
         // Delete service ----------
         app.delete('/deleteItem/:id', async (req, res) => {
@@ -133,16 +142,27 @@ async function run() {
             const result = await orderCollection.deleteOne(query);
             res.send(result)
         })
+
+
         // Delivery Finish  service ----------
         app.delete('/deliveryFinish/:id', async (req, res) => {
             const id = req.params.id;
-
             const query = { _id: ObjectId(id) };
-            console.log(query)
             const result = await orderApprovedCollection.deleteOne(query);
-            console.log(query)
             res.send(result)
         })
+
+
+        // Delete service ----------
+        app.delete('/updateDelete/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) };
+            const result = await servicesCollection.deleteOne(query);
+            res.send(result)
+
+        })
+
+
     }
     finally {
         // await client.close();
