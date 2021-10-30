@@ -65,13 +65,8 @@ async function run() {
         })
         //POST API new --------------------
         app.post('/postServices', async (req, res) => {
-
             const service = req.body;
-
-            // console.log('hit the post api', service)
-
             const result = await servicesCollection.insertOne(service)
-            // console.log(result)
             res.send(result)
         })
 
@@ -81,11 +76,7 @@ async function run() {
         app.post('/addToOrders', async (req, res) => {
 
             const service = req.body;
-            // console.log(service)
-            // console.log('hit the post api', service)
-
             const result = await orderCollection.insertOne(service)
-            // console.log(result)
             res.send(result)
         })
         //Order Approved api-----------------
@@ -98,11 +89,8 @@ async function run() {
         // update api-------------------
         app.put("/updateService/:id", async (req, res) => {
             const id = req.params.id;
-
             const updatedService = req.body;
             const filter = { _id: ObjectId(id) };
-            // console.log(updatedService)
-
             servicesCollection
                 .updateOne(filter, {
                     $set: {
@@ -116,14 +104,12 @@ async function run() {
                     res.send(result);
                 });
         });
+
         // approve api-------------------
         app.put("/updateApproved/:id", async (req, res) => {
             const id = req.params.id;
-
             const updateApproved = req.body;
             const filter = { _id: ObjectId(id) };
-            // console.log(updatedService)
-
             orderCollection
                 .updateOne(filter, {
                     $set: {
@@ -139,18 +125,6 @@ async function run() {
                 });
         });
 
-        //get search -------------------
-        app.get("/searchServices", async (req, res) => {
-            const result = await servicesCollection.find({
-                title: { $regex: req.query.search },
-            }).toArray();
-            res.send(result);
-            // console.log(result);
-        })
-
-
-
-
         // Delete service ----------
         app.delete('/deleteItem/:id', async (req, res) => {
             const id = req.params.id;
@@ -160,17 +134,6 @@ async function run() {
         })
 
 
-        // Delivery Finish  service ----------
-        // app.delete('/deliveryFinish/:id', async (req, res) => {
-        //     const id = req;
-
-        //     // const query = { _id: ObjectId(id) };
-        //     // const result = await orderApprovedCollection.deleteOne(query);
-        //     console.log(id)
-        //     res.json("result")
-        // })
-
-
         // Delete service ----------
         app.delete('/updateDelete/:id', async (req, res) => {
             const id = req.params.id;
@@ -178,7 +141,6 @@ async function run() {
             const result = await servicesCollection.deleteOne(query);
             res.send(result)
             console.log(req.params)
-
         })
 
 
@@ -190,10 +152,6 @@ async function run() {
 
 run().catch(console.dir);
 // ------------------------------------------------------
-
-
-
-
 
 
 app.get('/', (req, res) => {
