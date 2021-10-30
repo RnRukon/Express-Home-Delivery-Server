@@ -90,13 +90,8 @@ async function run() {
         })
         //Order Approved api-----------------
         app.post('/orderApproved', async (req, res) => {
-
             const service = req.body;
-            // console.log(service)
-            // console.log('hit the post api', service)
-
             const result = await orderApprovedCollection.insertOne(service)
-            // console.log(result)
             res.send(result)
         })
 
@@ -121,12 +116,33 @@ async function run() {
                     res.send(result);
                 });
         });
+        // approve api-------------------
+        app.put("/updateApproved/:id", async (req, res) => {
+            const id = req.params.id;
+
+            const updateApproved = req.body;
+            const filter = { _id: ObjectId(id) };
+            // console.log(updatedService)
+
+            orderCollection
+                .updateOne(filter, {
+                    $set: {
+                        title: updateApproved.title,
+                        description: updateApproved.description,
+                        price: updateApproved.price,
+                        img: updateApproved.img,
+                        pending: updateApproved.pending
+                    },
+                })
+                .then((result) => {
+                    res.send(result);
+                });
+        });
 
         //get search -------------------
         app.get("/searchServices", async (req, res) => {
             const result = await servicesCollection.find({
                 title: { $regex: req.query.search },
-
             }).toArray();
             res.send(result);
             // console.log(result);
@@ -145,12 +161,14 @@ async function run() {
 
 
         // Delivery Finish  service ----------
-        app.delete('/deliveryFinish/:id', async (req, res) => {
-            const id = req.params.id;
-            const query = { _id: ObjectId(id) };
-            const result = await orderApprovedCollection.deleteOne(query);
-            res.send(result)
-        })
+        // app.delete('/deliveryFinish/:id', async (req, res) => {
+        //     const id = req;
+
+        //     // const query = { _id: ObjectId(id) };
+        //     // const result = await orderApprovedCollection.deleteOne(query);
+        //     console.log(id)
+        //     res.json("result")
+        // })
 
 
         // Delete service ----------
@@ -159,6 +177,7 @@ async function run() {
             const query = { _id: ObjectId(id) };
             const result = await servicesCollection.deleteOne(query);
             res.send(result)
+            console.log(req.params)
 
         })
 
